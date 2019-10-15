@@ -55,8 +55,8 @@ encode model =
         , ( "osType", OperatingSystem.encode model.osType )
         , ( "dbApplication", DbApplication.encode model.dbApplication )
         , ( "ram", Memory.encode model.ram )
-        , ( "cpus", Maybe.withDefault Encode.null (Maybe.map Encode.int) model.cpus )
-        , ( "connections", Maybe.withDefault Encode.null (Maybe.map Encode.int) model.connections )
+        , ( "cpus", Maybe.withDefault Encode.null (Maybe.map Encode.int model.cpus) )
+        , ( "connections", Maybe.withDefault Encode.null (Maybe.map Encode.int model.connections) )
         , ( "dataStorage", DataStorage.encode model.dataStorage )
 
         ]
