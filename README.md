@@ -20,7 +20,7 @@ To compile this project you need to install:
 ```bash
 git clone https://github.com/sainth-/pgtune_frontend.git
 cd pgtune_frontend
-elm make src/Main.elm
+elm make --optimize src/Main.elm
 ```
 
 ## Overview
