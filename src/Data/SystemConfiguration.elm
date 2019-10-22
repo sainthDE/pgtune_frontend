@@ -29,7 +29,7 @@ type alias SystemConfiguration =
     , osType : OperatingSystem
     , dbApplication : DbApplication
     , ram : Memory
-    , cpus : (Maybe Int)
+    , cores : (Maybe Int)
     , connections : (Maybe Int)
     , dataStorage : DataStorage
     }
@@ -42,7 +42,7 @@ decoder =
         |> required "osType" OperatingSystem.decoder
         |> required "dbApplication" DbApplication.decoder
         |> required "ram" Memory.decoder
-        |> optional "cpus" (Decode.nullable Decode.int) Nothing
+        |> optional "cores" (Decode.nullable Decode.int) Nothing
         |> optional "connections" (Decode.nullable Decode.int) Nothing
         |> required "dataStorage" DataStorage.decoder
 
@@ -55,7 +55,7 @@ encode model =
         , ( "osType", OperatingSystem.encode model.osType )
         , ( "dbApplication", DbApplication.encode model.dbApplication )
         , ( "ram", Memory.encode model.ram )
-        , ( "cpus", Maybe.withDefault Encode.null (Maybe.map Encode.int model.cpus) )
+        , ( "cores", Maybe.withDefault Encode.null (Maybe.map Encode.int model.cores) )
         , ( "connections", Maybe.withDefault Encode.null (Maybe.map Encode.int model.connections) )
         , ( "dataStorage", DataStorage.encode model.dataStorage )
 

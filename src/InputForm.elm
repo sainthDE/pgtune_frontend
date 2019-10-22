@@ -27,7 +27,7 @@ type Msg
     | ChangeDbApplication (Result String DbApp.DbApplication)
     | ChangeRam Mem.Memory
     | ChangeRamUnit (Result String Unit.SizeUnit)
-    | ChangeCPUs (Maybe Int)
+    | ChangeCores (Maybe Int)
     | ChangeConnections (Maybe Int)
     | ChangeDataStorage (Result String DS.DataStorage)
     | SubmitForm
@@ -48,8 +48,8 @@ update msg model =
             let oldValue = model.ram
                 newValue = { oldValue | unit = Result.withDefault Unit.GB unit }
             in ({ model | ram = newValue }, Cmd.none)
-        ChangeCPUs cpus ->
-            ({ model | cpus = cpus }, Cmd.none)
+        ChangeCores cores ->
+            ({ model | cores = cores }, Cmd.none)
         ChangeConnections connections ->
             ({ model | connections = connections }, Cmd.none)
         ChangeDataStorage dataStorage ->
@@ -72,7 +72,7 @@ view model =
     , selectp dbApplicationP ChangeDbApplication model.dbApplication [] dbApplications
     , input [ type_ "text", placeholder "RAM", value (String.fromInt model.ram.memory), onInput (\mem -> ChangeRam (Mem.Memory (Maybe.withDefault model.ram.memory (String.toInt mem)) model.ram.unit)) ] []
     , selectp sizeUnitP ChangeRamUnit model.ram.unit [] sizeUnits
-    , input [ type_ "text", placeholder "CPUs", value (Maybe.withDefault "" (Maybe.map String.fromInt model.cpus)), onInput (ChangeCPUs << String.toInt) ] []
+    , input [ type_ "text", placeholder "Cores", value (Maybe.withDefault "" (Maybe.map String.fromInt model.cores)), onInput (ChangeCores << String.toInt) ] []
     , input [ type_ "text", placeholder "Connections", value (Maybe.withDefault "" (Maybe.map String.fromInt model.connections)), onInput (ChangeConnections << String.toInt) ] []
     , selectp dataStorageP ChangeDataStorage model.dataStorage [] dataStorages
     , button [ onClick SubmitForm ] [ text "Submit" ]
