@@ -7,7 +7,6 @@ import Data.DbApplication as DbApp
 import Data.Memory as Mem
 import Data.SizeUnit as Unit
 import Data.DataStorage as DS
-import Debug
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -16,10 +15,12 @@ import Http
 import Monocle.Prism exposing (Prism)
 import Html.SelectPrism exposing (selectp)
 
-type alias Model = Sysconf.SystemConfiguration
+type alias Model = { parameters : Sysconf.SystemConfiguration
+                   , configuration : String
+                   }
 
 init : Model
-init = Sysconf.SystemConfiguration Postgres.V11 Os.Linux DbApp.WEB (Mem.Memory 4 Unit.GB) Nothing Nothing DS.HDD
+init = Model (Sysconf.SystemConfiguration Postgres.V11 Os.Linux DbApp.WEB (Mem.Memory 4 Unit.GB) Nothing Nothing DS.HDD) ""
 
 type Msg 
     = ChangeDbVersion (Result String Postgres.PostgresVersion)
@@ -37,45 +38,62 @@ update : Msg -> Model -> (Model, Cmd Msg)
 update msg model = 
     case msg of
         ChangeDbVersion dbVersion ->
-            ({ model | dbVersion = Result.withDefault Postgres.V11 dbVersion }, Cmd.none)
+            let oldValue = model.parameters
+                newValue = { oldValue | dbVersion = Result.withDefault Postgres.V11 dbVersion }
+            in ({ model | parameters = newValue }, Cmd.none)
         ChangeOsType osType ->
-            ({ model | osType = Result.withDefault Os.Linux osType }, Cmd.none)
+            let oldValue = model.parameters
+                newValue = { oldValue | osType = Result.withDefault Os.Linux osType }
+            in ({ model | parameters = newValue }, Cmd.none)
         ChangeDbApplication dbApplication ->
-            ({ model | dbApplication = Result.withDefault DbApp.WEB dbApplication }, Cmd.none)
+            let oldValue = model.parameters
+                newValue = { oldValue | dbApplication = Result.withDefault DbApp.WEB dbApplication }
+            in ({ model | parameters = newValue }, Cmd.none)
         ChangeRam ram ->
-            ({ model | ram = ram }, Cmd.none)
+            let oldValue = model.parameters
+                newValue = { oldValue | ram = ram }
+            in ({ model | parameters = newValue }, Cmd.none)
         ChangeRamUnit unit ->
-            let oldValue = model.ram
-                newValue = { oldValue | unit = Result.withDefault Unit.GB unit }
-            in ({ model | ram = newValue }, Cmd.none)
+            let oldValue = model.parameters
+                oldValue2 = oldValue.ram
+                newValue2 = { oldValue2 | unit = Result.withDefault Unit.GB unit }
+                newValue = { oldValue | ram = newValue2 }
+            in ({ model | parameters = newValue }, Cmd.none)
         ChangeCores cores ->
-            ({ model | cores = cores }, Cmd.none)
+            let oldValue = model.parameters
+                newValue = { oldValue | cores = cores }
+            in ({ model | parameters = newValue }, Cmd.none)
         ChangeConnections connections ->
-            ({ model | connections = connections }, Cmd.none)
+            let oldValue = model.parameters
+                newValue = { oldValue | connections = connections }
+            in ({ model | parameters = newValue }, Cmd.none)
         ChangeDataStorage dataStorage ->
-            ({ model | dataStorage = Result.withDefault DS.HDD dataStorage }, Cmd.none)
+            let oldValue = model.parameters
+                newValue = { oldValue | dataStorage = Result.withDefault DS.HDD dataStorage }
+            in ({ model | parameters = newValue }, Cmd.none)
         SubmitForm ->
             (model, Http.post
                         { url = "/api/configuration"
-                        , body = Http.jsonBody (Sysconf.encode model)
+                        , body = Http.jsonBody (Sysconf.encode model.parameters)
                         , expect = Http.expectString GotConfig
                         })
         GotConfig res ->
-            let _ = Debug.log "Result: " res
-            in (model, Cmd.none)
+            ( { model | configuration = Result.withDefault "err" res }, Cmd.none)
 
 view : Model -> Html Msg
 view model =
-  div []
-    [ selectp postgresVersionP ChangeDbVersion model.dbVersion [] postgresVersions
-    , selectp osTypeP ChangeOsType model.osType [] osTypes
-    , selectp dbApplicationP ChangeDbApplication model.dbApplication [] dbApplications
-    , input [ type_ "text", placeholder "RAM", value (String.fromInt model.ram.memory), onInput (\mem -> ChangeRam (Mem.Memory (Maybe.withDefault model.ram.memory (String.toInt mem)) model.ram.unit)) ] []
-    , selectp sizeUnitP ChangeRamUnit model.ram.unit [] sizeUnits
-    , input [ type_ "text", placeholder "Cores", value (Maybe.withDefault "" (Maybe.map String.fromInt model.cores)), onInput (ChangeCores << String.toInt) ] []
-    , input [ type_ "text", placeholder "Connections", value (Maybe.withDefault "" (Maybe.map String.fromInt model.connections)), onInput (ChangeConnections << String.toInt) ] []
-    , selectp dataStorageP ChangeDataStorage model.dataStorage [] dataStorages
+  let params = model.parameters
+  in div []
+    [ selectp postgresVersionP ChangeDbVersion params.dbVersion [] postgresVersions
+    , selectp osTypeP ChangeOsType params.osType [] osTypes
+    , selectp dbApplicationP ChangeDbApplication params.dbApplication [] dbApplications
+    , input [ type_ "text", placeholder "RAM", value (String.fromInt params.ram.memory), onInput (\mem -> ChangeRam (Mem.Memory (Maybe.withDefault params.ram.memory (String.toInt mem)) params.ram.unit)) ] []
+    , selectp sizeUnitP ChangeRamUnit params.ram.unit [] sizeUnits
+    , input [ type_ "text", placeholder "Cores", value (Maybe.withDefault "" (Maybe.map String.fromInt params.cores)), onInput (ChangeCores << String.toInt) ] []
+    , input [ type_ "text", placeholder "Connections", value (Maybe.withDefault "" (Maybe.map String.fromInt params.connections)), onInput (ChangeConnections << String.toInt) ] []
+    , selectp dataStorageP ChangeDataStorage params.dataStorage [] dataStorages
     , button [ onClick SubmitForm ] [ text "Submit" ]
+    , pre [] [text model.configuration]
     ]
 
 postgresVersions = 
