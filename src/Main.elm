@@ -2,7 +2,7 @@ module Main exposing (main)
 
 import Browser
 import Html exposing (Html)
-import InputForm
+import Form
 
 
 main : Program () Model Msg
@@ -20,27 +20,27 @@ main =
 
 
 type alias Model =
-    { formModel : InputForm.Model
+    { formModel : Form.Model
     }
 
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    ( Model InputForm.init, Cmd.none )
+    ( Model Form.init, Cmd.none )
 
 
 -- UPDATE
 
 
 type Msg
-    = FormMsg InputForm.Msg
+    = FormMsg Form.Msg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         FormMsg m ->
-            let (mod, formMsg) = InputForm.update m model.formModel
+            let (mod, formMsg) = Form.update m model.formModel
             in ({ model | formModel = mod }, Cmd.map FormMsg formMsg)
 
 
@@ -59,4 +59,4 @@ subscriptions _ =
 
 view : Model -> Html Msg
 view model =
-    Html.map FormMsg (InputForm.view model.formModel)
+    Html.map FormMsg (Form.view model.formModel)

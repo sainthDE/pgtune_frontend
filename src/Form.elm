@@ -1,4 +1,4 @@
-module InputForm exposing (Model, init, Msg, update, view)
+module Form exposing (Model, init, Msg, update, view)
 
 import Data.SystemConfiguration as Sysconf
 import Data.PostgresVersion as Postgres
