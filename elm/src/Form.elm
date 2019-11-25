@@ -14,6 +14,9 @@ import Html.Events exposing (onInput, onClick)
 import Http
 import Monocle.Prism exposing (Prism)
 import Html.SelectPrism exposing (selectp)
+import List exposing ((::))
+import String exposing (isEmpty)
+import Tuple exposing (first, second)
 
 type alias Model = { parameters : Sysconf.SystemConfiguration
                    , configuration : String
@@ -83,18 +86,56 @@ update msg model =
 view : Model -> Html Msg
 view model =
   let params = model.parameters
-  in div []
-    [ selectp postgresVersionP ChangeDbVersion params.dbVersion [] postgresVersions
-    , selectp osTypeP ChangeOsType params.osType [] osTypes
-    , selectp dbApplicationP ChangeDbApplication params.dbApplication [] dbApplications
-    , input [ type_ "text", placeholder "RAM", value (String.fromInt params.ram.memory), onInput (\mem -> ChangeRam (Mem.Memory (Maybe.withDefault params.ram.memory (String.toInt mem)) params.ram.unit)) ] []
-    , selectp sizeUnitP ChangeRamUnit params.ram.unit [] sizeUnits
-    , input [ type_ "text", placeholder "Cores", value (Maybe.withDefault "" (Maybe.map String.fromInt params.cores)), onInput (ChangeCores << String.toInt) ] []
-    , input [ type_ "text", placeholder "Connections", value (Maybe.withDefault "" (Maybe.map String.fromInt params.connections)), onInput (ChangeConnections << String.toInt) ] []
-    , selectp dataStorageP ChangeDataStorage params.dataStorage [] dataStorages
-    , button [ onClick SubmitForm ] [ text "Submit" ]
-    , pre [] [text model.configuration]
+  in div [class "container"]
+    [ div [class "columns"] 
+      [ div [class "column", class "is-4", class "is-offset-2" ]
+        [ div [class "box"]
+          [ toFormElement "PostgreSQL Version" (toSelectBox postgresVersionP ChangeDbVersion params.dbVersion postgresVersions)
+          , toFormElement "Operating System" (toSelectBox osTypeP ChangeOsType params.osType osTypes)
+          , toFormElement "Application Area" (toSelectBox dbApplicationP ChangeDbApplication params.dbApplication dbApplications)
+          , toFormElement "RAM" (combineToField (input [ type_ "text", placeholder "RAM", value (String.fromInt params.ram.memory), onInput (\mem -> ChangeRam (Mem.Memory (Maybe.withDefault params.ram.memory (String.toInt mem)) params.ram.unit)), class "input" ] [], True) (toSelectBox sizeUnitP ChangeRamUnit params.ram.unit sizeUnits, False) )
+          , toFormElement "Number of CPU cores" (input [ type_ "text", placeholder "Cores", value (Maybe.withDefault "" (Maybe.map String.fromInt params.cores)), onInput (ChangeCores << String.toInt), class "input" ] [])
+          , toFormElement "Number of connections" (input [ type_ "text", placeholder "Connections", value (Maybe.withDefault "" (Maybe.map String.fromInt params.connections)), onInput (ChangeConnections << String.toInt), class "input" ] [])
+          , toFormElement "Storage technology" (toSelectBox dataStorageP ChangeDataStorage params.dataStorage dataStorages)
+          , button [ onClick SubmitForm, class "button", class "is-success", class "is-fullwidth" ] [ text "Generate" ]
+          ]
+        ]
+      , div [class "column", class "is-4", class "is-flex" ]
+        [ div [class "box", class "is-fullwidth"] 
+          [ p [] [text "Adjust the values and hit Generate to get your tuned configuration"]
+          , configurationToHtml model.configuration
+          ]
+        ]
+      ]
     ]
+
+configurationToHtml : String -> Html Msg
+configurationToHtml configuration = if (isEmpty configuration)
+                                    then p [] []
+                                    else pre [] [text configuration]
+
+toFormElement : String -> Html Msg -> Html Msg
+toFormElement title elem = 
+  div [ class "field" ]
+  [ label [ class "label" ] [ text title ]
+  , div [ class "control is-expanded" ] [ elem ]
+  ]
+
+combineToField : (Html Msg, Bool) -> (Html Msg, Bool) -> Html Msg
+combineToField form1 form2 = 
+  let expand1 = if (second form1)
+                then [class "is-expanded"]
+                else []
+      expand2 = if (second form2)
+                then [class "is-expanded"]
+                else []
+  in div [ class "field", class "has-addons"]
+    [ p ((class "control") :: expand1) [ first form1 ]
+    , p ((class "control") :: expand2) [ first form2 ]
+    ]
+
+toSelectBox : Prism String a -> (Result String a -> msg) -> a -> List (String, a ) -> Html msg
+toSelectBox prism msger selected_ labelValues = span [ class "select", class "is-fullwidth" ] [selectp prism msger selected_ [] labelValues]
 
 postgresVersions = 
     [ ("9.4", Postgres.V94)
