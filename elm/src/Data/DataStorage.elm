@@ -25,7 +25,6 @@ type DataStorage
     | SAN
 
 
-
 decoder : Decoder DataStorage
 decoder =
     Decode.string
@@ -46,7 +45,6 @@ decoder =
             )
 
 
-
 encode : DataStorage -> Encode.Value
 encode model =
     case model of
@@ -58,5 +56,3 @@ encode model =
 
         SAN ->
             Encode.string "SAN"
-
-

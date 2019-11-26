@@ -27,7 +27,6 @@ type SizeUnit
     | TB
 
 
-
 decoder : Decoder SizeUnit
 decoder =
     Decode.string
@@ -54,7 +53,6 @@ decoder =
             )
 
 
-
 encode : SizeUnit -> Encode.Value
 encode model =
     case model of
@@ -72,5 +70,3 @@ encode model =
 
         TB ->
             Encode.string "TB"
-
-

@@ -28,7 +28,6 @@ type PostgresVersion
     | V12
 
 
-
 decoder : Decoder PostgresVersion
 decoder =
     Decode.string
@@ -58,7 +57,6 @@ decoder =
             )
 
 
-
 encode : PostgresVersion -> Encode.Value
 encode model =
     case model of
@@ -79,5 +77,3 @@ encode model =
 
         V12 ->
             Encode.string "V12"
-
-

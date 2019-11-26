@@ -25,7 +25,6 @@ type OperatingSystem
     | Windows
 
 
-
 decoder : Decoder OperatingSystem
 decoder =
     Decode.string
@@ -46,7 +45,6 @@ decoder =
             )
 
 
-
 encode : OperatingSystem -> Encode.Value
 encode model =
     case model of
@@ -58,5 +56,3 @@ encode model =
 
         Windows ->
             Encode.string "Windows"
-
-

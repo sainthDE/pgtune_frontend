@@ -27,7 +27,6 @@ type DbApplication
     | MIXED
 
 
-
 decoder : Decoder DbApplication
 decoder =
     Decode.string
@@ -54,7 +53,6 @@ decoder =
             )
 
 
-
 encode : DbApplication -> Encode.Value
 encode model =
     case model of
@@ -72,5 +70,3 @@ encode model =
 
         MIXED ->
             Encode.string "MIXED"
-
-

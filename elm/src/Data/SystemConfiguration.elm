@@ -13,11 +13,11 @@
 
 module Data.SystemConfiguration exposing (SystemConfiguration, decoder, encode)
 
-import Data.PostgresVersion as PostgresVersion exposing (PostgresVersion)
-import Data.OperatingSystem as OperatingSystem exposing (OperatingSystem)
+import Data.DataStorage as DataStorage exposing (DataStorage)
 import Data.DbApplication as DbApplication exposing (DbApplication)
 import Data.Memory as Memory exposing (Memory)
-import Data.DataStorage as DataStorage exposing (DataStorage)
+import Data.OperatingSystem as OperatingSystem exposing (OperatingSystem)
+import Data.PostgresVersion as PostgresVersion exposing (PostgresVersion)
 import Dict exposing (Dict)
 import Json.Decode as Decode exposing (Decoder)
 import Json.Decode.Pipeline exposing (optional, required)
@@ -29,8 +29,8 @@ type alias SystemConfiguration =
     , osType : OperatingSystem
     , dbApplication : DbApplication
     , ram : Memory
-    , cores : (Maybe Int)
-    , connections : (Maybe Int)
+    , cores : Maybe Int
+    , connections : Maybe Int
     , dataStorage : DataStorage
     }
 
@@ -47,7 +47,6 @@ decoder =
         |> required "dataStorage" DataStorage.decoder
 
 
-
 encode : SystemConfiguration -> Encode.Value
 encode model =
     Encode.object
@@ -58,7 +57,4 @@ encode model =
         , ( "cores", Maybe.withDefault Encode.null (Maybe.map Encode.int model.cores) )
         , ( "connections", Maybe.withDefault Encode.null (Maybe.map Encode.int model.connections) )
         , ( "dataStorage", DataStorage.encode model.dataStorage )
-
         ]
-
-

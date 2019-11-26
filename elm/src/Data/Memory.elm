@@ -33,13 +33,9 @@ decoder =
         |> required "unit" SizeUnit.decoder
 
 
-
 encode : Memory -> Encode.Value
 encode model =
     Encode.object
         [ ( "memory", Encode.int model.memory )
         , ( "unit", SizeUnit.encode model.unit )
-
         ]
-
-
