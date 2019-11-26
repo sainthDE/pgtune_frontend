@@ -12,18 +12,21 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onInput, onClick)
 import Http
+import Json.Encode as Encode
 import Monocle.Prism exposing (Prism)
 import Html.SelectPrism exposing (selectp)
 import List exposing ((::))
 import String exposing (isEmpty)
 import Tuple exposing (first, second)
+import Url
 
 type alias Model = { parameters : Sysconf.SystemConfiguration
                    , configuration : String
+                   , url : Url.Url
                    }
 
-init : Model
-init = Model (Sysconf.SystemConfiguration Postgres.V11 Os.Linux DbApp.WEB (Mem.Memory 4 Unit.GB) Nothing Nothing DS.HDD) ""
+init : Url.Url -> Model
+init url = Model (Sysconf.SystemConfiguration Postgres.V11 Os.Linux DbApp.WEB (Mem.Memory 4 Unit.GB) Nothing Nothing DS.HDD) "" url
 
 type Msg 
     = ChangeDbVersion (Result String Postgres.PostgresVersion)
@@ -107,7 +110,30 @@ view model =
           ]
         ]
       ]
+    , div [class "columns"]
+      [ div [class "column", class "is-8", class "is-offset-2"]
+        [ pre [] [text (toCurlCommand params model.url)]            
+        ]
+      ]
     ]
+
+toCurlCommand : Sysconf.SystemConfiguration -> Url.Url -> String
+toCurlCommand params url =
+    let json = Encode.encode 0 (Sysconf.encode params)
+        addPort maybePort starter =
+            case maybePort of
+                Nothing -> starter
+                Just port_ -> starter ++ ":" ++ String.fromInt port_
+        url2 = 
+            let
+                http =
+                    case url.protocol of
+                        Url.Http -> "http://"
+                        Url.Https -> "https://"
+            in
+            addPort url.port_ (http ++ url.host)
+    in "curl -H \"Content-Type: application/json\" -H \"Accept: text/plain\" -d '" ++ json ++ "' -X POST " ++ url2 ++ "/api/configuration"                
+
 
 configurationToHtml : String -> Html Msg
 configurationToHtml configuration = if (isEmpty configuration)
