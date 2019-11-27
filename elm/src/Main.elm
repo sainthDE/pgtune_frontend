@@ -82,7 +82,7 @@ view model =
     }
 
 viewHeader : Html msg
-viewHeader = Html.nav [class "navbar", class "is-spaced"] 
+viewHeader = Html.nav [class "navbar"] 
                 [ div [class "container"]
                     [ div [class "navbar-brand"]
                         [ a [class "navbar-item", href "/"]
