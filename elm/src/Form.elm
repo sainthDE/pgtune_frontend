@@ -176,7 +176,8 @@ view model =
             ]
         , div [ class "columns" ]
             [ div [ class "column", class "is-8", class "is-offset-2" ]
-                [ pre [] [ text (toCurlCommand params model.url) ]
+                [ div [class "box"]
+                    [ pre [] [ text (toCurlCommand params model.url) ]]
                 ]
             ]
         ]
@@ -208,7 +209,10 @@ toCurlCommand params url =
             in
             addPort url.port_ (http ++ url.host)
     in
-    "curl -H \"Content-Type: application/json\" -H \"Accept: text/plain\" -d '" ++ json ++ "' -X POST " ++ url2 ++ "/api/configuration"
+    "curl -H \"Content-Type: application/json\" \\\n"
+    ++ "     -H \"Accept: text/plain\" \\\n"
+    ++ "     -d '" ++ json ++ "' \\\n"
+    ++ "     -X POST " ++ url2 ++ "/api/configuration"
 
 
 configurationToHtml : String -> Html Msg
