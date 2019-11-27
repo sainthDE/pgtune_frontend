@@ -39,7 +39,7 @@ create_archive() {
 	cp images/*.png publish/images
 	cp index.html styles.css styles.css.map elm.js favicon.ico manifest.json browserconfig.xml publish/
 	echo "Creating archive"
-	${TAR_EXE} czf pgtune.tar.gz -C publish/ publish
+	${TAR_EXE} czf pgtune.tar.gz -C publish/ .
 }
 
 quit() {
