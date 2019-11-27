@@ -28,12 +28,18 @@ build_elm() {
 
 build_css() {
 	echo "Building styles.css"
-	${SASS_EXE} --style compressed  styles/bulma.sass styles.css	
+	${SASS_EXE} --style compressed  styles/pgtune.sass styles.css	
 }
 
 create_archive() {
+	echo "Deleting old publish folder"
+	rm -rf publish
+	mkdir -p publish/images
+	echo "Copying artifacts and assets"
+	cp images/*.png publish/images
+	cp index.html styles.css styles.css.map elm.js favicon.ico manifest.json browserconfig.xml publish/
 	echo "Creating archive"
-	${TAR_EXE} czf pgtune.tar.gz index.html elm.js styles.css styles.css.map
+	${TAR_EXE} czf pgtune.tar.gz -C publish/ publish
 }
 
 quit() {
@@ -67,6 +73,7 @@ while getopts "ab:ch?" opt; do
         ;;
     c)
         rm -f ./elm.js ./styles.css ./styles.css.map ./pgtune.tar.gz
+	rm -rf publish/
         quit
         ;;
     h|\?)

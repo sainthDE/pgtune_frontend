@@ -6,7 +6,8 @@ repl-temp-*
 # sass files
 .sass-cache
 
-# compile artefacts
+# compile artifacts
+.tmp
 elm.js
 styles.css
 styles.css.map

@@ -3,7 +3,8 @@ module Main exposing (main)
 import Browser
 import Browser.Navigation as Nav
 import Form
-import Html exposing (Html)
+import Html exposing (Html, nav, div, a, img, button, p, span, text)
+import Html.Attributes exposing (class, href, src, alt, width, height)
 import Url
 import Url.Parser as Url
 
@@ -73,8 +74,35 @@ subscriptions _ =
 view : Model -> Browser.Document Msg
 view model =
     { title =
-        "pgTune - Tune up your PostgreSQL"
+        "pgTune - Tune your PostgreSQL up to eleven"
     , body =
-        [ Html.map FormMsg (Form.view model.formModel)
+        [ viewHeader
+        , Html.map FormMsg (Form.view model.formModel)
         ]
     }
+
+viewHeader : Html msg
+viewHeader = Html.nav [class "navbar", class "is-spaced"] 
+                [ div [class "container"]
+                    [ div [class "navbar-brand"]
+                        [ a [class "navbar-item", href "/"]
+                            [ img [src "images/brand.png", alt "pgTune - Tune your PostgreSQL up to eleven"] []]
+                        ]
+                    , div [class "navbar-menu"]
+                        [ div [class "navbar-end"]
+                            [ p [class "control"]
+                                [ a [class "button", href "https://github.com/sainth-/pgtune_frontend"]
+                                    [ span [class "icon"][ img [src "images/github.png", alt "github"] []]
+                                    , span [] [text "Frontend"]
+                                    ]
+                                ]
+                            , p [class "control"]
+                                [ a [class "button", href "https://github.com/sainth-/pgtune"]
+                                    [ span [class "icon"][ img [src "images/github.png", alt "github"] []]
+                                    , span [] [text "Backend"]
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
