@@ -18,6 +18,7 @@ import Monocle.Prism exposing (Prism)
 import String exposing (isEmpty)
 import Tuple exposing (first, second)
 import Url
+import Maybe
 
 
 type alias Model =
@@ -157,13 +158,13 @@ view model =
         [ div [ class "columns" ]
             [ div [ class "column", class "is-4", class "is-offset-2" ]
                 [ div [ class "box" ]
-                    [ toFormElement "PostgreSQL Version" (toSelectBox postgresVersionP ChangeDbVersion params.dbVersion postgresVersions)
-                    , toFormElement "Operating System" (toSelectBox osTypeP ChangeOsType params.osType osTypes)
-                    , toFormElement "Application Area" (toSelectBox dbApplicationP ChangeDbApplication params.dbApplication dbApplications)
-                    , toFormElement "RAM" (combineToField ( input [ type_ "text", placeholder "RAM", value (String.fromInt params.ram.memory), onInput (\mem -> ChangeRam (Mem.Memory (Maybe.withDefault params.ram.memory (String.toInt mem)) params.ram.unit)), class "input" ] [], True ) ( toSelectBox sizeUnitP ChangeRamUnit params.ram.unit sizeUnits, False ))
-                    , toFormElement "Number of CPU cores" (input [ type_ "text", placeholder "Cores", value (Maybe.withDefault "" (Maybe.map String.fromInt params.cores)), onInput (ChangeCores << String.toInt), class "input" ] [])
-                    , toFormElement "Number of connections" (input [ type_ "text", placeholder "Connections", value (Maybe.withDefault "" (Maybe.map String.fromInt params.connections)), onInput (ChangeConnections << String.toInt), class "input" ] [])
-                    , toFormElement "Storage technology" (toSelectBox dataStorageP ChangeDataStorage params.dataStorage dataStorages)
+                    [ toFormElement "PostgreSQL Version" Nothing (toSelectBox postgresVersionP ChangeDbVersion params.dbVersion postgresVersions)
+                    , toFormElement "Operating System" (Just "The operating system of the PostgreSQL host") (toSelectBox osTypeP ChangeOsType params.osType osTypes)
+                    , toFormElement "Application Area" (Just "For what type of application should be tuned") (toSelectBox dbApplicationP ChangeDbApplication params.dbApplication dbApplications)
+                    , toFormElement "RAM" (Just "How much memory can PostgreSQL use") (combineToField ( input [ type_ "text", placeholder "RAM", value (String.fromInt params.ram.memory), onInput (\mem -> ChangeRam (Mem.Memory (Maybe.withDefault params.ram.memory (String.toInt mem)) params.ram.unit)), class "input" ] [], True ) ( toSelectBox sizeUnitP ChangeRamUnit params.ram.unit sizeUnits, False ))
+                    , toFormElement "Number of CPU cores" (Just "How many CPU cores can PostgreSQL use\nThis refers to the number of CPUs that are recognized by the operating system.") (input [ type_ "text", placeholder "Cores", value (Maybe.withDefault "" (Maybe.map String.fromInt params.cores)), onInput (ChangeCores << String.toInt), class "input" ] [])
+                    , toFormElement "Number of connections" (Just "Maximum number of PostgreSQL client connections") (input [ type_ "text", placeholder "Connections", value (Maybe.withDefault "" (Maybe.map String.fromInt params.connections)), onInput (ChangeConnections << String.toInt), class "input" ] [])
+                    , toFormElement "Storage technology" Nothing (toSelectBox dataStorageP ChangeDataStorage params.dataStorage dataStorages)
                     , button [ onClick SubmitForm, class "button", class "is-success", class "is-fullwidth" ] [ text "Generate" ]
                     ]
                 ]
@@ -224,10 +225,10 @@ configurationToHtml configuration =
         pre [] [ text configuration ]
 
 
-toFormElement : String -> Html Msg -> Html Msg
-toFormElement title elem =
+toFormElement : String -> Maybe String -> Html Msg -> Html Msg
+toFormElement titletext helptext elem =
     div [ class "field" ]
-        [ label [ class "label" ] [ text title ]
+        [ label [ class "label" ] [ text titletext, text " ", Maybe.withDefault (text "") (Maybe.map (\h -> span [class "tag", class "is-info", class "is-light", class "is-normal", title h] [text "Hint"]) helptext) ]
         , div [ class "control is-expanded" ] [ elem ]
         ]
 
