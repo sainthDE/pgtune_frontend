@@ -16,12 +16,15 @@ main =
         , view = view
         , update = update
         , subscriptions = subscriptions
-        , onUrlRequest = \_ -> NoOp
+        , onUrlRequest = handleUrlRequest
         , onUrlChange = \_ -> NoOp
         }
 
 
-
+handleUrlRequest : Browser.UrlRequest -> Msg
+handleUrlRequest request = case request of
+                                Browser.Internal _ -> NoOp
+                                Browser.External href -> ChangeWebsite href
 -- MODEL
 
 
@@ -41,6 +44,7 @@ init _ url _ =
 
 type Msg
     = FormMsg Form.Msg
+    | ChangeWebsite String
     | NoOp
 
 
@@ -53,7 +57,7 @@ update msg model =
                     Form.update m model.formModel
             in
             ( { model | formModel = mod }, Cmd.map FormMsg formMsg )
-
+        ChangeWebsite href -> ( model, Nav.load href )
         NoOp ->
             ( model, Cmd.none )
 
