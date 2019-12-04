@@ -170,7 +170,7 @@ view model =
                 ]
             , div [ class "column", class "is-4", class "is-flex" ]
                 [ div [ class "box", class "is-fullwidth" ]
-                    [ p [class "field"] [ text "Adjust the values and hit Generate to get your tuned configuration" ]
+                    [ p [class "field"] [ text "Adjust the values and hit Generate to get your tuned configuration. ", a [class "tag", class "is-info", class "is-light", class "is-normal", href "https://github.com/sainth-/pgtune/wiki/Formulas"] [text "How does it work?"] ]
                     , configurationToHtml model.configuration
                     ]
                 ]
