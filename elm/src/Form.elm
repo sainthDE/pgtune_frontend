@@ -14,11 +14,11 @@ import Html.SelectPrism exposing (selectp)
 import Http
 import Json.Encode as Encode
 import List exposing ((::))
+import Maybe
 import Monocle.Prism exposing (Prism)
 import String exposing (isEmpty)
 import Tuple exposing (first, second)
 import Url
-import Maybe
 
 
 type alias Model =
@@ -170,18 +170,17 @@ view model =
                 ]
             , div [ class "column", class "is-4", class "is-flex" ]
                 [ div [ class "box", class "is-fullwidth" ]
-                    [ p [class "field"] [ text "Adjust the values and hit Generate to get your tuned configuration. ", a [class "tag", class "is-info", class "is-light", class "is-normal", href "https://github.com/sainth-/pgtune/wiki/Formulas"] [text "How does it work?"] ]
+                    [ p [ class "field" ] [ text "Adjust the values and hit Generate to get your tuned configuration. ", a [ class "tag", class "is-info", class "is-light", class "is-normal", href "https://github.com/sainth-/pgtune/wiki/Formulas" ] [ text "How does it work?" ] ]
                     , configurationToHtml model.configuration
                     ]
                 ]
             ]
         , div [ class "columns" ]
             [ div [ class "column", class "is-8", class "is-offset-2" ]
-                [ div [class "box"]
-                    [ pre [id "curl-command", class "field"] [ text (toCurlCommand params model.url) ]
-                    , div [] [button [ class "copy-btn", class "button", class "is-info", class "", class "is-fullwidth", attribute "data-clipboard-target" "#curl-command" ] [ text "Copy to Clipboard" ]]
+                [ div [ class "box" ]
+                    [ pre [ id "curl-command", class "field" ] [ text (toCurlCommand params model.url) ]
+                    , div [] [ button [ class "copy-btn", class "button", class "is-info", class "", class "is-fullwidth", attribute "data-clipboard-target" "#curl-command" ] [ text "Copy to Clipboard" ] ]
                     ]
-
                 ]
             ]
         ]
@@ -214,9 +213,13 @@ toCurlCommand params url =
             addPort url.port_ (http ++ url.host)
     in
     "curl -H \"Content-Type: application/json\" \\\n"
-    ++ "     -H \"Accept: text/plain\" \\\n"
-    ++ "     -d '" ++ json ++ "' \\\n"
-    ++ "     -X POST " ++ url2 ++ "/api/configuration"
+        ++ "     -H \"Accept: text/plain\" \\\n"
+        ++ "     -d '"
+        ++ json
+        ++ "' \\\n"
+        ++ "     -X POST "
+        ++ url2
+        ++ "/api/configuration"
 
 
 configurationToHtml : String -> Html Msg
@@ -225,16 +228,16 @@ configurationToHtml configuration =
         p [] []
 
     else
-        div [] 
-            [ pre [id "generated-config", class "field"] [ text configuration ]
-            , div [] [button [ class "copy-btn", class "button", class "is-info", class "is-fullwidth", attribute "data-clipboard-target" "#generated-config" ] [ text "Copy to Clipboard" ]]
+        div []
+            [ pre [ id "generated-config", class "field" ] [ text configuration ]
+            , div [] [ button [ class "copy-btn", class "button", class "is-info", class "is-fullwidth", attribute "data-clipboard-target" "#generated-config" ] [ text "Copy to Clipboard" ] ]
             ]
 
 
 toFormElement : String -> Maybe String -> Html Msg -> Html Msg
 toFormElement titletext helptext elem =
     div [ class "field" ]
-        [ label [ class "label" ] [ text titletext, text " ", Maybe.withDefault (text "") (Maybe.map (\h -> span [class "tag", class "is-info", class "is-light", class "is-normal", title h] [text "Hint"]) helptext) ]
+        [ label [ class "label" ] [ text titletext, text " ", Maybe.withDefault (text "") (Maybe.map (\h -> span [ class "tag", class "is-info", class "is-light", class "is-normal", title h ] [ text "Hint" ]) helptext) ]
         , div [ class "control is-expanded" ] [ elem ]
         ]
 

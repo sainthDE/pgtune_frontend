@@ -3,8 +3,8 @@ module Main exposing (main)
 import Browser
 import Browser.Navigation as Nav
 import Form
-import Html exposing (Html, nav, div, a, img, button, p, span, text)
-import Html.Attributes exposing (class, href, src, alt, width, height)
+import Html exposing (Html, a, button, div, img, nav, p, span, text)
+import Html.Attributes exposing (alt, class, height, href, src, width)
 import Url
 import Url.Parser as Url
 
@@ -22,9 +22,16 @@ main =
 
 
 handleUrlRequest : Browser.UrlRequest -> Msg
-handleUrlRequest request = case request of
-                                Browser.Internal _ -> NoOp
-                                Browser.External href -> ChangeWebsite href
+handleUrlRequest request =
+    case request of
+        Browser.Internal _ ->
+            NoOp
+
+        Browser.External href ->
+            ChangeWebsite href
+
+
+
 -- MODEL
 
 
@@ -57,7 +64,10 @@ update msg model =
                     Form.update m model.formModel
             in
             ( { model | formModel = mod }, Cmd.map FormMsg formMsg )
-        ChangeWebsite href -> ( model, Nav.load href )
+
+        ChangeWebsite href ->
+            ( model, Nav.load href )
+
         NoOp ->
             ( model, Cmd.none )
 
@@ -85,28 +95,30 @@ view model =
         ]
     }
 
+
 viewHeader : Html msg
-viewHeader = Html.nav [class "navbar"] 
-                [ div [class "container"]
-                    [ div [class "navbar-brand"]
-                        [ a [class "navbar-item", href "/"]
-                            [ img [src "images/brand.png", alt "pgTune - Tune your PostgreSQL up to eleven"] []]
+viewHeader =
+    Html.nav [ class "navbar" ]
+        [ div [ class "container" ]
+            [ div [ class "navbar-brand" ]
+                [ a [ class "navbar-item", href "/" ]
+                    [ img [ src "images/brand.png", alt "pgTune - Tune your PostgreSQL up to eleven" ] [] ]
+                ]
+            , div [ class "navbar-menu" ]
+                [ div [ class "navbar-end" ]
+                    [ p [ class "control" ]
+                        [ a [ class "button", href "https://github.com/sainth-/pgtune_frontend" ]
+                            [ span [ class "icon" ] [ img [ src "images/github.png", alt "github" ] [] ]
+                            , span [] [ text "Frontend" ]
+                            ]
                         ]
-                    , div [class "navbar-menu"]
-                        [ div [class "navbar-end"]
-                            [ p [class "control"]
-                                [ a [class "button", href "https://github.com/sainth-/pgtune_frontend"]
-                                    [ span [class "icon"][ img [src "images/github.png", alt "github"] []]
-                                    , span [] [text "Frontend"]
-                                    ]
-                                ]
-                            , p [class "control"]
-                                [ a [class "button", href "https://github.com/sainth-/pgtune"]
-                                    [ span [class "icon"][ img [src "images/github.png", alt "github"] []]
-                                    , span [] [text "Backend"]
-                                    ]
-                                ]
+                    , p [ class "control" ]
+                        [ a [ class "button", href "https://github.com/sainth-/pgtune" ]
+                            [ span [ class "icon" ] [ img [ src "images/github.png", alt "github" ] [] ]
+                            , span [] [ text "Backend" ]
                             ]
                         ]
                     ]
                 ]
+            ]
+        ]
