@@ -36,6 +36,7 @@ create_archive() {
 	rm -rf publish
 	mkdir -p publish/images
 	echo "Copying artifacts and assets"
+	cp -r assets publish/
 	cp images/*.png publish/images
 	cp index.html styles.css styles.css.map elm.js favicon.ico manifest.json browserconfig.xml publish/
 	echo "Creating archive"

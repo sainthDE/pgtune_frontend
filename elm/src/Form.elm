@@ -170,7 +170,7 @@ view model =
                 ]
             , div [ class "column", class "is-4", class "is-flex" ]
                 [ div [ class "box", class "is-fullwidth" ]
-                    [ p [] [ text "Adjust the values and hit Generate to get your tuned configuration" ]
+                    [ p [class "field"] [ text "Adjust the values and hit Generate to get your tuned configuration" ]
                     , configurationToHtml model.configuration
                     ]
                 ]
@@ -178,7 +178,10 @@ view model =
         , div [ class "columns" ]
             [ div [ class "column", class "is-8", class "is-offset-2" ]
                 [ div [class "box"]
-                    [ pre [] [ text (toCurlCommand params model.url) ]]
+                    [ pre [id "curl-command", class "field"] [ text (toCurlCommand params model.url) ]
+                    , div [] [button [ class "copy-btn", class "button", class "is-info", class "", class "is-fullwidth", attribute "data-clipboard-target" "#curl-command" ] [ text "Copy to Clipboard" ]]
+                    ]
+
                 ]
             ]
         ]
@@ -222,7 +225,10 @@ configurationToHtml configuration =
         p [] []
 
     else
-        pre [] [ text configuration ]
+        div [] 
+            [ pre [id "generated-config", class "field"] [ text configuration ]
+            , div [] [button [ class "copy-btn", class "button", class "is-info", class "is-fullwidth", attribute "data-clipboard-target" "#generated-config" ] [ text "Copy to Clipboard" ]]
+            ]
 
 
 toFormElement : String -> Maybe String -> Html Msg -> Html Msg

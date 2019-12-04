@@ -22,6 +22,7 @@
   <meta name="theme-color" content="#ffffff">
   <link rel="stylesheet" href="styles.css" />
   <script src="elm.js"></script>
+  <script src="assets/clipboard.min.js"></script>
 </head>
 <body>
 	<main>
@@ -32,6 +33,7 @@
 		var app = Elm.Main.init({
 			node: document.getElementById('elm')
 		});
-	</script>
+  </script>
+  <script>new ClipboardJS('.copy-btn');</script>
 </body>
 </html>
