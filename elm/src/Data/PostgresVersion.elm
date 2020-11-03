@@ -26,6 +26,7 @@ type PostgresVersion
     | V10
     | V11
     | V12
+    | V13
 
 
 decoder : Decoder PostgresVersion
@@ -50,6 +51,9 @@ decoder =
                         Decode.succeed V11
 
                     "V12" ->
+                        Decode.succeed V12
+
+                    "V13" ->
                         Decode.succeed V12
 
                     other ->
@@ -77,3 +81,6 @@ encode model =
 
         V12 ->
             Encode.string "V12"
+
+        V13 ->
+            Encode.string "V13"

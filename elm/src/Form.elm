@@ -30,7 +30,7 @@ type alias Model =
 
 init : Url.Url -> Model
 init url =
-    Model (Sysconf.SystemConfiguration Postgres.V11 Os.Linux DbApp.WEB (Mem.Memory 4 Unit.GB) Nothing Nothing DS.HDD) "" url
+    Model (Sysconf.SystemConfiguration Postgres.V13 Os.Linux DbApp.WEB (Mem.Memory 4 Unit.GB) Nothing Nothing DS.HDD) "" url
 
 
 type Msg
@@ -277,6 +277,7 @@ postgresVersions =
     , ( "10", Postgres.V10 )
     , ( "11", Postgres.V11 )
     , ( "12", Postgres.V12 )
+    , ( "13", Postgres.V13 )
     ]
 
 
@@ -362,6 +363,9 @@ postgresVersionP =
 
                 Postgres.V12 ->
                     "V12"
+
+                Postgres.V13 ->
+                    "V13"
     in
     Prism fromString toString
 
