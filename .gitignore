@@ -2,6 +2,9 @@
 elm-stuff
 # elm-repl generated files
 repl-temp-*
+# npm stuff
+node_modules
+package-lock.json
 
 # sass files
 .sass-cache
