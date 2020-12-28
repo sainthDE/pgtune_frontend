@@ -59,7 +59,7 @@ elm reactor
 
 ## Contributing
 
-Since pgtune is currently part of a project work of my studies, no external contributions can be accepted at the moment. But that will change in the future.
+Feel free to send a pull request.
 
 ## Acknowlegdement
 
